@@ -12,7 +12,7 @@ import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.CODE_GENERATIO
 import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.FEATURE_NAME
 import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.MAX_PROJECT_SIZE_BYTES
 import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.clients.FeatureDevClient
-import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.conversationIdNotFound
+import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.ConversationIdNotFoundError
 import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.messages.sendAsyncEventProgress
 import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.util.FeatureDevService
 import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.util.resolveAndCreateOrUpdateFile
@@ -138,7 +138,7 @@ class Session(val tabID: String, val project: Project) {
     val conversationId: String
         get() {
             if (_conversationId == null) {
-                conversationIdNotFound()
+                throw ConversationIdNotFoundError()
             } else {
                 return _conversationId as String
             }

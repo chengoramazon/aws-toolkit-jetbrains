@@ -24,7 +24,10 @@ import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.MonthlyConvers
 import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.ZipFileError
 import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.apiError
 import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.clients.FeatureDevClient
-import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.exportParseError
+import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.ExportParseError
+import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.ExportResultArchiveFailed
+import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.GetCodeGenerationFailed
+import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.StartCodeGenerationFailed
 import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.session.CodeGenerationStreamResult
 import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.session.ExportTaskAssistResultArchiveStreamResult
 import software.aws.toolkits.jetbrains.services.cwc.controller.chat.telemetry.getStartUrl
@@ -138,7 +141,7 @@ class FeatureDevService(val proxyClient: FeatureDevClient, val project: Project)
                     throw ZipFileError("The zip file is corrupted", e.cause)
                 }
             }
-            apiError(errMssg, e.cause)
+            throw StartCodeGenerationFailed(message=errMssg, cause = e.cause)
         }
     }
 
@@ -162,7 +165,7 @@ class FeatureDevService(val proxyClient: FeatureDevClient, val project: Project)
                 errMssg = e.awsErrorDetails().errorMessage()
                 logger.warn(e) { "GetTaskAssistCodeGeneration failed for request:  ${e.requestId()}" }
             }
-            apiError(errMssg, e.cause)
+            throw GetCodeGenerationFailed(message = errMssg, cause = e.cause)
         }
     }
 
@@ -179,7 +182,7 @@ class FeatureDevService(val proxyClient: FeatureDevClient, val project: Project)
                 errMssg = e.awsErrorDetails().errorMessage()
                 logger.warn(e) { "ExportTaskAssistArchiveResult failed for request: ${e.requestId()}" }
             }
-            apiError(errMssg, e.cause)
+            throw ExportResultArchiveFailed(message = errMssg, cause = e.cause)
         }
 
         val parsedResult: ExportTaskAssistResultArchiveStreamResult
@@ -188,7 +191,7 @@ class FeatureDevService(val proxyClient: FeatureDevClient, val project: Project)
             parsedResult = jacksonObjectMapper().readValue(result)
         } catch (e: Exception) {
             logger.error(e) { "Failed to parse downloaded code results" }
-            exportParseError()
+            throw ExportParseError()
         }
 
         return parsedResult.code_generation_result

@@ -4,7 +4,7 @@
 package software.aws.toolkits.jetbrains.services.amazonqFeatureDev
 
 import software.aws.toolkits.jetbrains.services.amazonq.RepoSizeError
-import software.aws.toolkits.resources.message
+import software.aws.toolkits.resources.AwsToolkitBundle.message
 
 open class FeatureDevException(override val message: String?, override val cause: Throwable? = null) : RuntimeException()
 
@@ -16,23 +16,33 @@ class CodeIterationLimitError(override val message: String, override val cause: 
 
 class MonthlyConversationLimitError(override val message: String, override val cause: Throwable?) : RuntimeException()
 
-internal fun featureDevServiceError(message: String?): Nothing =
-    throw FeatureDevException(message)
+class GetCodeGenerationFailed(override val message: String?, override val cause: Throwable? = null) : FeatureDevException(message, cause)
 
-internal fun codeGenerationFailedError(): Nothing =
-    throw FeatureDevException(message("amazonqFeatureDev.code_generation.failed_generation"))
+class ExportResultArchiveFailed(override val message: String?, override val cause: Throwable? = null) : FeatureDevException(message, cause)
 
-internal fun uploadCodeError(): Nothing =
-    throw FeatureDevException(message("amazonqFeatureDev.exception.upload_code"))
+class StartCodeGenerationFailed(override val message: String?, override val cause: Throwable? = null) : FeatureDevException(message, cause)
 
-internal fun conversationIdNotFound(): Nothing =
-    throw FeatureDevException(message("amazonqFeatureDev.exception.conversation_not_found"))
+class CodeGenFailed(override val message: String? = message("amazonqFeatureDev.code_generation.failed_generation"), override val cause: Throwable? = null) : FeatureDevException(message, cause)
+
+class GuardrailsException(override val message: String? = message("amazonqFeatureDev.exception.guardrails"), override val cause: Throwable? = null) : FeatureDevException(message, cause)
+
+class PromptRefusalException(override val message: String? = message("amazonqFeatureDev.exception.prompt_refusal"), override val cause: Throwable? = null) : FeatureDevException(message, cause)
+
+class EmptyPatchException(override val message: String? = message("amazonqFeatureDev.code_generation.error_message"), override val cause: Throwable? = null) : FeatureDevException(message, cause)
+
+class ThrottlingException(override val message: String? = message("amazonqFeatureDev.exception.throttling"), override val cause: Throwable? = null) : FeatureDevException(message, cause)
+
+class UnknownCodeGenError(override val message: String? = message("amazonqFeatureDev.exception.throttling"), override val cause: Throwable? = null) : FeatureDevException(message, cause)
+
+class UploadCodeError(override val message: String? = message("amazonqFeatureDev.exception.upload_code"), override val cause: Throwable? = null) : FeatureDevException(message, cause)
+
+class ConversationIdNotFoundError(override val message: String? = message("amazonqFeatureDev.exception.conversation_not_found"), override val cause: Throwable? = null) : FeatureDevException(message, cause)
+
+class ExportParseError(override val message: String? = message("amazonqFeatureDev.exception.export_parsing_error"), override val cause: Throwable? = null) : FeatureDevException(message, cause)
+
 
 internal fun apiError(message: String?, cause: Throwable?): Nothing =
     throw FeatureDevException(message, cause)
-
-internal fun exportParseError(): Nothing =
-    throw FeatureDevException(message("amazonqFeatureDev.exception.export_parsing_error"))
 
 val denyListedErrors = arrayOf("Deserialization error", "Inaccessible host", "UnknownHost")
 fun createUserFacingErrorMessage(message: String?): String? =

@@ -15,7 +15,7 @@ import software.aws.toolkits.jetbrains.services.amazonq.SERVER_SIDE_ENCRYPTION
 import software.aws.toolkits.jetbrains.services.amazonq.SERVER_SIDE_ENCRYPTION_AWS_KMS_KEY_ID
 import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.FEATURE_NAME
 import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.clients.FeatureDevClient
-import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.uploadCodeError
+import software.aws.toolkits.jetbrains.services.amazonqFeatureDev.UploadCodeError
 import java.io.File
 import java.net.HttpURLConnection
 
@@ -38,7 +38,7 @@ fun uploadArtifactToS3(url: String, fileToUpload: File, checksumSha256: String, 
             }
     } catch (err: Exception) {
         logger.warn(err) { "$FEATURE_NAME: Failed to upload code to S3" }
-        uploadCodeError()
+        throw UploadCodeError()
     }
 }
 
