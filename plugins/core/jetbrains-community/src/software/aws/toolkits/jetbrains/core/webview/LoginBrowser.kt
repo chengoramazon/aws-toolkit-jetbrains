@@ -3,6 +3,7 @@
 
 package software.aws.toolkits.jetbrains.core.webview
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
 import com.intellij.openapi.application.runInEdt
@@ -81,7 +82,7 @@ abstract class LoginBrowser(
     protected var currentAuthorization: PendingAuthorization? = null
 
     @VisibleForTesting
-    internal val objectMapper = jacksonObjectMapper()
+    internal val objectMapper = jacksonObjectMapper().enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
 
     abstract fun handleBrowserMessage(message: BrowserMessage?)
 

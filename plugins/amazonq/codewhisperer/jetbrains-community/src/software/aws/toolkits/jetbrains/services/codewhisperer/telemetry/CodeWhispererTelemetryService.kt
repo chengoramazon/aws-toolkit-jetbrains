@@ -3,6 +3,7 @@
 
 package software.aws.toolkits.jetbrains.services.codewhisperer.telemetry
 
+import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.Service
@@ -179,7 +180,9 @@ class CodeWhispererTelemetryService {
             codewhispererSessionId = responseContext.sessionId,
             codewhispererSuggestionIndex = index.toLong(),
             codewhispererSuggestionReferenceCount = recommendation.references().size.toLong(),
-            codewhispererSuggestionReferences = jacksonObjectMapper().writeValueAsString(recommendation.references().map { it.licenseName() }.toSet().toList()),
+            codewhispererSuggestionReferences = jacksonObjectMapper()
+                .enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES)
+                .writeValueAsString(recommendation.references().map { it.licenseName() }.toSet().toList()),
             codewhispererSuggestionImportCount = if (importEnabled) recommendation.mostRelevantMissingImports().size.toLong() else null,
             codewhispererSuggestionState = suggestionState,
             codewhispererTriggerType = triggerTypeInfo.triggerType,
